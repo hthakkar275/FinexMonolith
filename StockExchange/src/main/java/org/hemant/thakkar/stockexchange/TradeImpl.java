@@ -2,9 +2,13 @@ package org.hemant.thakkar.stockexchange;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class TradeImpl implements Trade {
+
+	private static AtomicLong idGenerator = new AtomicLong(1);
+	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm:ss.SSS");
 
 	private long id;
 	private LocalDateTime tradeTime;
@@ -13,81 +17,81 @@ public class TradeImpl implements Trade {
 	private int quantity;
 	private BigDecimal price;
 	
-//	public TradeImpl(LocalDateTime time, BigDecimal price, int qtyTraded, long id2, long takerId, long buyer,
-//			long seller, long id3) {
-//		// TODO Auto-generated constructor stub
-//	}
-
+	public TradeImpl() {
+		this.setId(idGenerator.getAndIncrement());
+		this.setTradeTime(LocalDateTime.now());
+	}
+	
 	@Override
 	public long getId() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.id;
 	}
 
 	@Override
 	public void setId(long id) {
-		// TODO Auto-generated method stub
-
+		this.id = id;
 	}
 
 	@Override
 	public LocalDateTime getTradeTime() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.tradeTime;
 	}
 
 	@Override
 	public void setTradeTime(LocalDateTime tradeTime) {
-		// TODO Auto-generated method stub
-
+		this.tradeTime = tradeTime;
 	}
 
 	@Override
 	public Tradable getBuyer() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.buyer;
 	}
 
 	@Override
-	public void setBuyer(Tradable buyTradable) {
-		// TODO Auto-generated method stub
-		
+	public void setBuyer(Tradable buyer) {
+		this.buyer = buyer;
 	}
 
 	@Override
 	public Tradable getSeller() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.seller;
 	}
 
 	@Override
-	public void setSeller(Tradable sellTradable) {
-		// TODO Auto-generated method stub
-		
+	public void setSeller(Tradable seller) {
+		this.seller = seller;
 	}
 
 	@Override
 	public BigDecimal getPrice() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.price;
 	}
 
 	@Override
 	public void setPrice(BigDecimal price) {
-		// TODO Auto-generated method stub
-		
+		this.price = price;
 	}
 
 	@Override
 	public int getQuantity() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.quantity;
 	}
 
 	@Override
 	public void setQuantity(int quantity) {
-		// TODO Auto-generated method stub
-		
+		this.quantity = quantity;
 	}
 
+	public String toString() {
+		StringBuffer message = new StringBuffer();
+		message.append("-------- Trade ----------\n");
+		message.append("ID: ").append(this.getId()).append("\n");
+		message.append("Time: " + formatter.format(LocalDateTime.now()) + "\n");
+		message.append("Qty: ").append(this.getQuantity()).append("\n");
+		message.append("Price: ").append(this.getPrice()).append("\n");
+		message.append("Buyer: ").append(this.getBuyer());
+		message.append("Seller: ").append(this.getSeller());
+		return message.toString();
+
+	}
 }

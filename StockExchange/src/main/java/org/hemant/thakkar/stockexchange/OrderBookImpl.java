@@ -1,6 +1,5 @@
 package org.hemant.thakkar.stockexchange;
 
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -15,7 +14,8 @@ import java.util.stream.Collectors;
 
 public class OrderBookImpl {
 	private static BigDecimal TWO = new BigDecimal("2.0");
-	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm:ss.SSS");
+	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm:ss.SSS");
+	
 	private List<Trade> tape = new ArrayList<Trade>();
 	private List<Order> orders = new ArrayList<Order>();
 	private BigDecimal tickSize;
@@ -168,7 +168,6 @@ public class OrderBookImpl {
 				qtyRemaining -= qtyTraded;
 			}
 			Trade trade = new TradeImpl();
-			trade.setTradeTime(LocalDateTime.now());
 			if (incomingOrder.getSide() == Side.SELL) {
 				trade.setSeller(incomingOrder);
 				trade.setBuyer(headOrder);
@@ -305,24 +304,24 @@ public class OrderBookImpl {
 	}
 	
 	public String toString() {
-		StringWriter fileStr = new StringWriter();
-		fileStr.write("Time: " + formatter.format(LocalDateTime.now()) + "\n");
-		fileStr.write(" -------- The Order Book --------\n");
-		fileStr.write("|                                |\n");
-		fileStr.write("|   ------- Bid  Book --------   |\n");
+		StringBuffer message = new StringBuffer();
+		message.append("Time: " + formatter.format(LocalDateTime.now()) + "\n");
+		message.append(" -------- The Order Book --------\n");
+		message.append("|                                |\n");
+		message.append("|   ------- Bid  Book --------   |\n");
 		String bids = this.orders.stream().filter(o -> o.getSide() == Side.BUY)
 				.map(o -> o.toString())
-				.reduce("", (a, b) -> a + " | " + b);
-		fileStr.write(bids + "\n");
-		fileStr.write("|   ------ Offer  Book -------   |\n");
-		String offers = this.orders.stream().filter(o -> o.getSide() == Side.BUY)
+				.reduce("", (a, b) -> a + "\n    " + b);
+		message.append(bids + "\n");
+		message.append("|   ------ Offer  Book -------   |\n");
+		String offers = this.orders.stream().filter(o -> o.getSide() == Side.SELL)
 				.map(o -> o.toString())
-				.reduce("", (a, b) -> a + " | " + b);
-		fileStr.write(offers + "\n");
-		fileStr.write("|   -------- Trades  ---------   |");
-		this.tape.stream().forEach(o -> fileStr.write(tape.toString()));
-		fileStr.write("\n --------------------------------\n");
-		return fileStr.toString();
+				.reduce("", (a, b) -> a + "\n    " + b);
+		message.append(offers + "\n");
+		message.append("|   -------- Trades  ---------   |");
+		this.tape.stream().forEach(o -> message.append(tape.toString()));
+		message.append("\n --------------------------------\n");
+		return message.toString();
 	}
 
 
