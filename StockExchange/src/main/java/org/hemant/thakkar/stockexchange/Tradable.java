@@ -10,4 +10,6 @@ public interface Tradable {
 	public LocalDateTime getEntryTime();
 	public void setEntryTime(LocalDateTime entryTime);
 	public Participant getParticipant();
+	public Side getSide();
+	public void setSide(Side side);
 }
