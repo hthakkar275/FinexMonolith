@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class OrderBookImpl {
+public class OrderBookImpl implements OrderBook {
 	private static BigDecimal TWO = new BigDecimal("2.0");
 	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm:ss.SSS");
 	
@@ -20,6 +20,11 @@ public class OrderBookImpl {
 	private List<Order> orders = new ArrayList<Order>();
 	private BigDecimal tickSize;
 	
+
+	public OrderBookImpl() {
+		this(new BigDecimal("0.01"));
+	}
+
 	public OrderBookImpl(BigDecimal tickSize) {
 		this.tickSize = tickSize;
 		this.reset();
@@ -327,6 +332,18 @@ public class OrderBookImpl {
 
 	public List<Trade> getTape() {
 		return tape;
+	}
+
+	@Override
+	public void cancelOrder(Side side, long orderId, int time) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int volumeOnSide(String side) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

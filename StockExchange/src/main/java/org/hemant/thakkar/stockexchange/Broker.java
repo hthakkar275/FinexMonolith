@@ -2,14 +2,14 @@ package org.hemant.thakkar.stockexchange;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-public class ParticipantImpl implements Participant {
+public class Broker implements Participant {
 
 	private static AtomicLong idGenerator = new AtomicLong(1);
 
 	private long id;
 	private String name;
 	
-	public ParticipantImpl() {
+	public Broker() {
 		this.id = idGenerator.getAndIncrement();
 	}
 	

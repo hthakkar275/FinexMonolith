@@ -8,23 +8,21 @@ import java.util.List;
 public interface OrderBook {
 	void reset();
 
-	OrderReport processOrder(Order quote, boolean verbose);
+	OrderReport processOrder(Order order, boolean verbose);
 
-	void cancelOrder(String side, int qId, int time);
+	void cancelOrder(Side side, long orderId, int time);
 
-	void modifyOrder(int qId, HashMap<String, String> quote);
+	void modifyOrder(int qId, HashMap<String, String> order);
 
-	int getVolumeAtPrice(String side, double price);
+	int getVolumeAtPrice(Side side, BigDecimal price);
 
-	double getBestBid();
+	BigDecimal getBestBid();
 
-	double getWorstBid();
+	BigDecimal getWorstBid();
 
-	double getBestOffer();
+	BigDecimal getBestOffer();
 
-	double getWorstOffer();
-
-	int getLastOrderSign();
+	BigDecimal getWorstOffer();
 
 	int volumeOnSide(String side);
 
@@ -32,7 +30,7 @@ public interface OrderBook {
 
 	BigDecimal getSpread();
 
-	double getMid();
+	BigDecimal getMid();
 
 	boolean bidsAndAsksExist();
 
