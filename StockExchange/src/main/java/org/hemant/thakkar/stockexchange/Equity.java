@@ -1,5 +1,6 @@
 package org.hemant.thakkar.stockexchange;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Equity implements Product {
@@ -44,4 +45,11 @@ public class Equity implements Product {
 		this.description = description;
 	}
 
+	public String toString() {
+		StringBuffer message = new StringBuffer();
+		message.append(" id = ").append(this.getId()).append(";");
+		message.append(" symbol = ").append(getSymbol());
+		return message.toString();
+
+	}
 }

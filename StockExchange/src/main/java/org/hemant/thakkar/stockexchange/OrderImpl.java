@@ -1,6 +1,7 @@
 package org.hemant.thakkar.stockexchange;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class OrderImpl extends TradableImpl implements Order {
 
@@ -69,5 +70,17 @@ public class OrderImpl extends TradableImpl implements Order {
 	@Override
 	public void setLongevity(OrderLongevity longevity) {
 		this.longevity = longevity;
+	}
+	
+	public String toString() {
+		StringBuffer message = new StringBuffer();
+		message.append(" id = ").append(this.getId()).append(";");
+		message.append(" time = ").append(formatter.format(LocalDateTime.now())).append(";");
+		message.append(" side = ").append(this.getSide()).append(";");
+		message.append(" qty = ").append(this.getQuantity()).append(";");
+		message.append(" price = ").append(this.getPrice()).append(";");
+		message.append(" participant: ").append(this.getParticipant());
+		return message.toString();
+
 	}
 }

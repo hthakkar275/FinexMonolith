@@ -10,7 +10,7 @@ public interface OrderBook {
 
 	OrderReport processOrder(Order order, boolean verbose);
 
-	void cancelOrder(Side side, long orderId, int time);
+	void cancelOrder(long orderId);
 
 	void modifyOrder(int qId, HashMap<String, String> order);
 
@@ -24,7 +24,7 @@ public interface OrderBook {
 
 	BigDecimal getWorstOffer();
 
-	int volumeOnSide(String side);
+	int volumeOnSide(Side side);
 
 	BigDecimal getTickSize();
 
@@ -37,5 +37,9 @@ public interface OrderBook {
 	String toString();
 
 	List<Trade> getTape();
+
+	Product getProduct();
+
+	void setProduct(Product product);
 
 }

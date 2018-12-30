@@ -1,11 +1,14 @@
 package org.hemant.thakkar.stockexchange;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class TradableImpl implements Tradable {
 
 	private static AtomicLong idGenerator = new AtomicLong(1);
+	static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm:ss.SSS");
+
 	private long id;
 	private Product product;
 	private Participant participant;

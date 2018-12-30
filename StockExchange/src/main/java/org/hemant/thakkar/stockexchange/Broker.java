@@ -33,4 +33,10 @@ public class Broker implements Participant {
 		this.name = name;
 	}
 
+	public String toString() {
+		StringBuffer message = new StringBuffer();
+		message.append("id = ").append(getId()).append(";");
+		message.append("name = ").append(getName());
+		return message.toString();
+	}
 }
