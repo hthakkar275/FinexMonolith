@@ -291,7 +291,7 @@ class OrderBookImplTest {
 	}
 
 	@Test
-	void testLimitDayOrderPartiallyMatchedWithUnmatchedBooked() {
+	void testLimitDayOrderPartiallyMatchedWithUnmatchedQuantityBooked() {
 		Broker broker1 = new Broker();
 		broker1.setName("Hemant");
 		

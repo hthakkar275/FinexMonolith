@@ -50,19 +50,24 @@ public class OrderBookImpl implements OrderBook {
 	}
 	
 	
-	public OrderReport processOrder(Order order, boolean verbose) {
+	public OrderReport processOrder(Order incomingOrder, boolean verbose) {
 		OrderReport oReport;
 		
-		if (order.getQuantity() <= 0 ) {
+		if (incomingOrder.getQuantity() <= 0 ) {
 			throw new IllegalArgumentException("processOrder() given qty <= 0");
 		}
 		
-		if (order.getType() == OrderType.LIMIT) {
-			BigDecimal clippedPrice = clipPrice(order.getPrice());
-			order.setPrice(clippedPrice);
-			oReport = processLimitOrder(order, verbose);
+		if (!(incomingOrder.getSide() == Side.BUY || incomingOrder.getSide() == Side.SELL)) {		
+			throw new IllegalArgumentException("order neither market nor limit: " + 
+					incomingOrder.getSide());
+		}
+
+		if (incomingOrder.getType() == OrderType.LIMIT) {
+			BigDecimal clippedPrice = clipPrice(incomingOrder.getPrice());
+			incomingOrder.setPrice(clippedPrice);
+			oReport = processLimitOrder(incomingOrder, verbose);
 		} else {
-			oReport = processMarketOrder(order, verbose);
+			oReport = processMarketOrder(incomingOrder, verbose);
 		}
 		return oReport;
 	}
@@ -113,30 +118,7 @@ public class OrderBookImpl implements OrderBook {
 	private OrderReport processLimitOrder(Order incomingOrder, boolean verbose) {
 		boolean orderInBook = false;
 		ArrayList<Trade> trades = new ArrayList<Trade>();
-		Side incomingOrderSide = incomingOrder.getSide();
-		final Side oppositeOrderSide;
 		int qtyRemaining = incomingOrder.getQuantity();
-		if (incomingOrderSide == Side.BUY) {		
-			oppositeOrderSide = Side.SELL;
-		} else if (incomingOrderSide == Side.SELL) {
-			oppositeOrderSide = Side.BUY;
-		} else {
-			throw new IllegalArgumentException("order neither market nor limit: " + 
-				    incomingOrderSide);
-		}
-		// Find all offers/sell-orders at or below the buy orders limit price
-		// sorted by time entry. We want to give earliest order the highest
-		// priority.
-//		List<Order> tradableOrders = this.orders.stream()
-//				.filter(o -> o.getSide() == oppositeOrderSide && o.getPrice().compareTo(order.getPrice()) <= 0)
-//				.sorted(Comparator.comparing(Order::getEntryTime))
-//				.collect(Collectors.toList());
-//		List<Order> tradableOrders = this.orders.stream()
-//				.filter(o -> o.getSide() == oppositeOrderSide && 
-//						(o.getPrice().compareTo(order.getPrice()) == 0 || 
-//							o.getPrice().compareTo(order.getPrice()) == priceComparisonSign))
-//				.sorted(Comparator.comparing(Order::getEntryTime))
-//				.collect(Collectors.toList());
 	
 		List<Order> tradableOrders = this.orders.stream()
 				.filter(o -> {
@@ -157,18 +139,20 @@ public class OrderBookImpl implements OrderBook {
 											incomingOrder, verbose);
 		}
 		
-		Iterator<Order> iterator = orders.iterator();
-		while (iterator.hasNext()) {
-			Order o = iterator.next();
-			if (o.getQuantity() == 0) {
-				iterator.remove();
-			}
+		List<Order> tradedOrders = orders.stream()
+				.filter(o -> o.getQuantity() == 0)
+				.collect(Collectors.toList());
+		
+		synchronized(orders) {
+			tradedOrders.stream().forEach(o -> orders.remove(o));
 		}
-
+		
 		// If volume remains, add order to book
 		if (qtyRemaining > 0) {
 			incomingOrder.setQuantity(qtyRemaining);
-			this.orders.add(incomingOrder);
+			synchronized(orders) {
+				this.orders.add(incomingOrder);
+			}
 			orderInBook = true;
 		} else {
 			orderInBook = false;
@@ -219,7 +203,7 @@ public class OrderBookImpl implements OrderBook {
 		return qtyRemaining;
 	}
 	
-	public void cancelOrder(long orderId) {
+	public synchronized void cancelOrder(long orderId) {
 		Iterator<Order> iterator = orders.iterator();
 		while (iterator.hasNext()) {
 			Order o = iterator.next();
@@ -326,7 +310,7 @@ public class OrderBookImpl implements OrderBook {
 		return minOfferPrice.subtract(maxBidPrice);
 	}
 	
-	public BigDecimal getMid() {
+	public synchronized BigDecimal getMid() {
 		return this.getBestBid().add(this.getSpread().divide(TWO));
 	}
 	

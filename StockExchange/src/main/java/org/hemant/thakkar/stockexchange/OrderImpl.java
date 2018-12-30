@@ -72,6 +72,23 @@ public class OrderImpl extends TradableImpl implements Order {
 		this.longevity = longevity;
 	}
 	
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return this.getId() == order.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        if (getId() > Integer.MAX_VALUE) {
+        	return (int) (getId() % Integer.MAX_VALUE);
+        } else {
+        	return (int) getId();
+        }
+    }
+    
 	public String toString() {
 		StringBuffer message = new StringBuffer();
 		message.append(" id = ").append(this.getId()).append(";");
